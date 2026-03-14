@@ -54,9 +54,9 @@ I accessed the browser's Developer Console to manually change Boolean variables 
 
 What made this even more striking was viewing the page source and finding hardcoded credentials directly in the JavaScript — username and password in plaintext, visible to anyone who right-clicks and selects "View Source."
 
-DRAG AND DROP vuln1 javascript 
+![viewsource-vuln1](viewsource-vuln1.JPG)
 
-I initially expected this to be more complicated than it was. The fact that it took about ten seconds to bypass a login screen by reading the source code was genuinely unsettling — and a powerful reminder of why server-side validation exists.
+I initially expected this to be more complicated than it was. The fact that it took about ten seconds to bypass a login screen by reading the source code was genuinely unsettling and a powerful reminder of why server-side validation exists.
 
 ### SQL Data Extraction
 
@@ -68,17 +68,17 @@ SELECT name FROM hacking_tools WHERE category = 'Network Intelligence' AND amoun
 
 This type of precise filtering mirrors how real attackers operate — targeting specific high-value data rather than performing bulk extractions that would trigger alerts.
 
-DRAG-AND-DROP sql_operators.JPG HERE
+![sql_operators](sql_operators.JPG)
 
 ### HTTP Interception and XSS with Burp Suite
 
 Using Burp Suite's Proxy, I intercepted a live HTTP POST request and injected an XSS payload directly into the email parameter. Burp's Inspector panel showed the URL-encoded payload being decoded in real-time, giving me full visibility into how the malicious script would be processed by the server.
 
-DRAG-AND-DROP xss-test2.JPG HERE
+![xss-test2](xss-test2.JPG)
 
 The injected script executed successfully on the target application, producing an alert popup — confirming a reflected XSS vulnerability. This demonstrated the full attack chain: intercept the request in Burp, modify a parameter with a malicious payload, forward it to the server, and observe the result.
 
-DRAG-AND-DROP successfulXSS3.JPG HERE
+![successfulXSS3](successfulXSS3.JPG)
 
 *(No specific TryHackMe flags or exact task solutions are shared in this write-up.)*
 
@@ -88,11 +88,11 @@ DRAG-AND-DROP successfulXSS3.JPG HERE
 
 ### 1. Detecting Client-Side Bypass Attempts
 
-If I saw an alert for anomalous HTTP POST requests containing mismatched parameters — for example, a shopping cart total showing $0.00 while the item ID corresponds to a high-value product — I would immediately investigate this as a client-side bypass attempt. The attacker likely intercepted and modified the request between the browser and the server, altering the price parameter while keeping everything else intact. Understanding this attack pattern from hands-on practice means I know exactly which log fields to examine.
+If I saw an alert for anomalous HTTP POST requests containing mismatched parameters, for example, a shopping cart total showing $0.00 while the item ID corresponds to a high-value product — I would immediately investigate this as a client-side bypass attempt. The attacker likely intercepted and modified the request between the browser and the server, altering the price parameter while keeping everything else intact. Understanding this attack pattern from hands-on practice means I know exactly which log fields to examine.
 
 ### 2. Identifying SQL Injection in Access Logs
 
-If I noticed unusual characters in our web server's access logs — patterns like `' OR 1=1 --`, `UNION SELECT`, or `GROUP_CONCAT()` — I would escalate immediately as a potential SQL injection attempt. These are not strings that appear in legitimate user input. I would correlate with the WAF logs to check whether the payload was blocked or passed through, and examine the response size to determine whether data exfiltration may have succeeded.
+If I noticed unusual characters in our web server's access logs, patterns like `' OR 1=1 --`, `UNION SELECT`, or `GROUP_CONCAT()` — I would escalate immediately as a potential SQL injection attempt. These are not strings that appear in legitimate user input. I would correlate with the WAF logs to check whether the payload was blocked or passed through, and examine the response size to determine whether data exfiltration may have succeeded.
 
 ### 3. Recognizing Proxy-Based Attacks
 
